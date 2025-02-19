@@ -4,7 +4,7 @@ class MasterResponseClass {
   MasterResponseClass({this.requestData});
 
   MasterResponseClass.fromJson(Map<String, dynamic> json) {
-    requestData = json['responseData'];
+    requestData = (json['responseData'] != null) ? json['responseData'] : "";
   }
 
   Map<String, dynamic> toJson() {

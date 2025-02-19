@@ -46,29 +46,18 @@ class MmUtils {
     required String? baseUrl,
     required GlobalKey<NavigatorState> navigatorKey,
   }) {
-    assert(
-        secretKey!.isNotEmpty, "Must required secretKey for data encryption");
+    assert(secretKey!.isNotEmpty, "Must required secretKey for data encryption");
     assert(ivKey!.isNotEmpty, "Must required ivKey for data encryption");
     assert(baseUrl!.isNotEmpty, "Must required base Url to call apis");
     assert(appName!.isNotEmpty, "Must required app name for logs");
 
     MmUtils.instance ??= MmUtils._();
-    MmUtils.instance!.initialize(
-        secretKey: secretKey!,
-        ivKey: ivKey!,
-        baseUrl: baseUrl!,
-        appName: appName!,
-        navigatorKey: navigatorKey);
+    MmUtils.instance!.initialize(secretKey: secretKey!, ivKey: ivKey!, baseUrl: baseUrl!, appName: appName!, navigatorKey: navigatorKey);
     return MmUtils.instance!;
   }
 
   /// Initialize MenstrualCycleWidget
-  void initialize(
-      {required String secretKey,
-      required String ivKey,
-      required String baseUrl,
-      required String appName,
-      required GlobalKey<NavigatorState> navigatorKey}) {
+  void initialize({required String secretKey, required String ivKey, required String baseUrl, required String appName, required GlobalKey<NavigatorState> navigatorKey}) {
     _aesSecretKey = secretKey;
     _aesIvKey = ivKey;
     _baseUrl = baseUrl;
@@ -76,8 +65,12 @@ class MmUtils {
     _navigatorKey = navigatorKey;
   }
 
-  void updateConfiguration({String authToken = "", bool isPrintLogs = false}) {
-    _authToken = authToken;
-    _isPrintLog = isPrintLogs;
+  void updateConfiguration({String? authToken, bool? isPrintLogs}) {
+    if (authToken != null) {
+      _authToken = authToken;
+    }
+    if (isPrintLogs != null) {
+      _isPrintLog = isPrintLogs;
+    }
   }
 }
