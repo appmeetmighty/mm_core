@@ -1,4 +1,4 @@
-## 1.0.0
+## 1.1.0
 * Added: Encryption and Decryption for API Requests:
     * Implemented encryption of sensitive data in all outgoing API requests to enhance data security.
       Decryption mechanism added for incoming API responses to ensure secure communication between client and server.

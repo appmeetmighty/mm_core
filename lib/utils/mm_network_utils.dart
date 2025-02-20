@@ -25,7 +25,8 @@ Map<String, String> buildHeaderTokens() {
   };
 
   if (MmUtils.instance!.getToken().isNotEmpty) {
-    header.putIfAbsent(HttpHeaders.authorizationHeader, () => 'Bearer ${MmUtils.instance!.getToken()}');
+    header.putIfAbsent(HttpHeaders.authorizationHeader,
+        () => 'Bearer ${MmUtils.instance!.getToken()}');
   } else {
     printLogs("Token not found");
   }
@@ -60,23 +61,28 @@ getDecryptDataResponse(String response, {bool isJsonDecode = false}) {
   return "";
 }
 
-Future<Response> buildHttpResponse(String endPoint, {HttpMethod method = HttpMethod.get, Map? request}) async {
+Future<Response> buildHttpResponse(String endPoint,
+    {HttpMethod method = HttpMethod.get, Map? request}) async {
   if (await isNetworkAvailable()) {
     DateTime startApiCall = DateTime.now();
     var headers = buildHeaderTokens();
     Uri url = buildBaseUrl(endPoint);
     //printLogs('Request Before: $request');
-    Map<String, dynamic> requestData = {"requestData": getEncryptRequest(request)};
+    Map<String, dynamic> requestData = {
+      "requestData": getEncryptRequest(request)
+    };
 
     printLogs('Request After: $requestData');
     Response response;
 
     if (method == HttpMethod.post) {
-      response = await http.post(url, body: jsonEncode(requestData), headers: headers);
+      response =
+          await http.post(url, body: jsonEncode(requestData), headers: headers);
     } else if (method == HttpMethod.delete) {
       response = await delete(url, headers: headers);
     } else if (method == HttpMethod.put) {
-      response = await put(url, body: jsonEncode(requestData), headers: headers);
+      response =
+          await put(url, body: jsonEncode(requestData), headers: headers);
     } else {
       response = await get(url, headers: headers);
     }
@@ -93,8 +99,12 @@ Future<Response> buildHttpResponse(String endPoint, {HttpMethod method = HttpMet
           request: jsonEncode(request),
           encryptRequest: getEncryptRequest(request),
           statusCode: response.statusCode.validate(),
-          encryptResponse: MasterResponseClass.fromJson(jsonDecode(response.body)).requestData!,
-          responseBody: getDecryptDataResponse(MasterResponseClass.fromJson(jsonDecode(response.body)).requestData!),
+          encryptResponse:
+              MasterResponseClass.fromJson(jsonDecode(response.body))
+                  .requestData!,
+          responseBody: getDecryptDataResponse(
+              MasterResponseClass.fromJson(jsonDecode(response.body))
+                  .requestData!),
           methodType: method.name,
           startTime: startApiCall,
           endTime: endApiCall);
@@ -170,49 +180,63 @@ void apiURLResponseLog({
   DateTime? startTime,
   DateTime? endTime,
 }) {
-  String currentDate = "${MmUtils.instance!.getAppName()} : ${DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now())}";
+  String currentDate =
+      "${MmUtils.instance!.getAppName()} : ${DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now())}";
 
-  _printLogsForRequest("\u001B[39m \u001b[96m┌─────────────────────────── \u001b[31m Start log report from $currentDate \u001b[96m ───────────────────────────┐\u001B[39m");
+  _printLogsForRequest(
+      "\u001B[39m \u001b[96m┌─────────────────────────── \u001b[31m Start log report from $currentDate \u001b[96m ───────────────────────────┐\u001B[39m");
 
   if (startTime != null && endTime != null) {
     Duration difference = endTime.difference(startTime);
     int minutes = difference.inMinutes % 60; // Remaining minutes
     int seconds = difference.inSeconds % 60; // Remaining seconds
-    int milliseconds = difference.inMilliseconds % 1000; // Remaining milliseconds
-    _printLogsForRequest("\u001b[31m Api execution time (mm:ss:ms): \u001B[39m $minutes:$seconds:$milliseconds");
+    int milliseconds =
+        difference.inMilliseconds % 1000; // Remaining milliseconds
+    _printLogsForRequest(
+        "\u001b[31m Api execution time (mm:ss:ms): \u001B[39m $minutes:$seconds:$milliseconds");
   }
   _printLogsForRequest("\u001b[31m Url: \u001B[39m $url");
-  _printLogsForRequest("\u001b[31m Header: \u001B[39m \u001b[96m$headers\u001B[39m");
+  _printLogsForRequest(
+      "\u001b[31m Header: \u001B[39m \u001b[96m$headers\u001B[39m");
   if (request.isNotEmpty) {
-    _printLogsForRequest("\u001b[31m Request: \u001B[39m \u001b[96m$request\u001B[39m");
+    _printLogsForRequest(
+        "\u001b[31m Request: \u001B[39m \u001b[96m$request\u001B[39m");
   }
 
   if (encryptRequest.isNotEmpty) {
-    _printLogsForRequest("\u001b[31m Encrypt Request: \u001B[39m \u001b[96m$encryptRequest\u001B[39m");
+    _printLogsForRequest(
+        "\u001b[31m Encrypt Request: \u001B[39m \u001b[96m$encryptRequest\u001B[39m");
   }
 
   if (encryptResponse.isNotEmpty) {
-    _printLogsForRequest("\u001b[31m Encrypt Response: \u001B[39m \u001b[96m$encryptResponse\u001B[39m");
+    _printLogsForRequest(
+        "\u001b[31m Encrypt Response: \u001B[39m \u001b[96m$encryptResponse\u001B[39m");
   }
   _printLogsForRequest(statusCode.isSuccessful() ? "\u001b[32m" : "\u001b[31m");
-  _printLogsForRequest('Response ($methodType) $statusCode ${statusCode.isSuccessful() ? "\u001b[32m" : "\u001b[31m"} ');
+  _printLogsForRequest(
+      'Response ($methodType) $statusCode ${statusCode.isSuccessful() ? "\u001b[32m" : "\u001b[31m"} ');
   //if(responseBody!=null) {
   _printLogsForRequest(responseBody);
   //}
   _printLogsForRequest("\u001B[0m");
-  String engLog = "${MmUtils.instance!.getAppName()} : ${DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now())}";
+  String engLog =
+      "${MmUtils.instance!.getAppName()} : ${DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now())}";
 
-  _printLogsForRequest("\u001B[39m \u001b[96m└─────────────────────────── \u001b[31m Log report end from $engLog \u001b[96m ───────────────────────────┘\u001B[39m");
+  _printLogsForRequest(
+      "\u001B[39m \u001b[96m└─────────────────────────── \u001b[31m Log report end from $engLog \u001b[96m ───────────────────────────┘\u001B[39m");
 }
 
-Future<MultipartRequest> getMultiPartRequest(String endPoint, {String? baseUrl}) async {
+Future<MultipartRequest> getMultiPartRequest(String endPoint,
+    {String? baseUrl}) async {
   String url = baseUrl ?? buildBaseUrl(endPoint).toString();
   printLogs(url);
   return MultipartRequest('POST', Uri.parse(url));
 }
 
-Future<void> sendMultiPartRequest(MultipartRequest multiPartRequest, {Function(dynamic)? onSuccess, Function(dynamic)? onError}) async {
-  http.Response response = await http.Response.fromStream(await multiPartRequest.send());
+Future<void> sendMultiPartRequest(MultipartRequest multiPartRequest,
+    {Function(dynamic)? onSuccess, Function(dynamic)? onError}) async {
+  http.Response response =
+      await http.Response.fromStream(await multiPartRequest.send());
   printLogs("Result: ${response.body}");
 
   if (response.statusCode.isSuccessful()) {
