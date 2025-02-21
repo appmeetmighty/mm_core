@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class MmUtils {
@@ -17,6 +18,8 @@ class MmUtils {
 
   static String _appName = "";
 
+  static bool? _isEncryptData;
+
   // to check is print logs
   static bool _isPrintLog = true;
 
@@ -35,6 +38,17 @@ class MmUtils {
   String getAppName() => _appName;
 
   bool isPrintLog() => _isPrintLog;
+
+  bool isEncryptData() {
+    if (kDebugMode) {
+      if (_isEncryptData != null) {
+        return _isEncryptData!;
+      }
+      return false;
+    } else {
+      return _isEncryptData!;
+    }
+  }
 
   GlobalKey<NavigatorState> getNavigatorStateKey() => _navigatorKey;
 
@@ -76,12 +90,16 @@ class MmUtils {
     _navigatorKey = navigatorKey;
   }
 
-  void updateConfiguration({String? authToken, bool? isPrintLogs}) {
+  void updateConfiguration(
+      {String? authToken, bool? isPrintLogs, bool? isEncryptData}) {
     if (authToken != null) {
       _authToken = authToken;
     }
     if (isPrintLogs != null) {
       _isPrintLog = isPrintLogs;
+    }
+    if (isEncryptData != null) {
+      _isEncryptData = isEncryptData;
     }
   }
 }

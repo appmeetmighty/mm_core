@@ -1,3 +1,8 @@
+## 2.0.0
+* Added: isEncryptData function parameter to control encryption requests.
+* Updated: request handling to conditionally encrypt data based on _isEncryptData.
+* Improved: flexibility by allowing optional encryption for API requests
+
 ## 1.1.0
 * Added: Encryption and Decryption for API Requests:
     * Implemented encryption of sensitive data in all outgoing API requests to enhance data security.

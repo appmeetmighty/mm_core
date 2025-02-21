@@ -1,5 +1,5 @@
 class MasterResponseClass {
-  String? requestData;
+  dynamic requestData;
 
   MasterResponseClass({this.requestData});
 

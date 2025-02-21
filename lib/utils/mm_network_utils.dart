@@ -27,8 +27,6 @@ Map<String, String> buildHeaderTokens() {
   if (MmUtils.instance!.getToken().isNotEmpty) {
     header.putIfAbsent(HttpHeaders.authorizationHeader,
         () => 'Bearer ${MmUtils.instance!.getToken()}');
-  } else {
-    printLogs("Token not found");
   }
 
   return header;
@@ -43,22 +41,28 @@ Uri buildBaseUrl(String endPoint) {
 }
 
 getEncryptRequest(Map? request) {
-  String encryptRequest = jsonEncode(request);
-  return Encryption.instance.encryptData(encryptRequest);
+  if (MmUtils.instance!.isEncryptData()) {
+    String encryptRequest = jsonEncode(request);
+    return Encryption.instance.encryptData(encryptRequest);
+  }
+  return request;
 }
 
-getDecryptDataResponse(String response, {bool isJsonDecode = false}) {
-  try {
-    String realResponse = Encryption.instance.decryptData(response);
-    // printLogs("realResponse $realResponse");
-    if (isJsonDecode) {
-      return jsonDecode(realResponse);
+getDecryptDataResponse(dynamic response, {bool isJsonDecode = false}) {
+  if (MmUtils.instance!.isEncryptData()) {
+    try {
+      String realResponse = Encryption.instance.decryptData(response);
+      if (isJsonDecode) {
+        return jsonDecode(realResponse);
+      }
+      return realResponse;
+    } catch (e) {
+      printLogs("Error from decryptData $e");
     }
-    return realResponse;
-  } catch (e) {
-    printLogs("Error from decryptData $e");
+    return "";
+  } else {
+    return response;
   }
-  return "";
 }
 
 Future<Response> buildHttpResponse(String endPoint,
@@ -67,12 +71,15 @@ Future<Response> buildHttpResponse(String endPoint,
     DateTime startApiCall = DateTime.now();
     var headers = buildHeaderTokens();
     Uri url = buildBaseUrl(endPoint);
-    //printLogs('Request Before: $request');
-    Map<String, dynamic> requestData = {
-      "requestData": getEncryptRequest(request)
-    };
 
-    printLogs('Request After: $requestData');
+    dynamic requestData;
+
+    if (MmUtils.instance!.isEncryptData()) {
+      requestData = {"requestData": getEncryptRequest(request)};
+    } else {
+      requestData = request;
+    }
+
     Response response;
 
     if (method == HttpMethod.post) {
@@ -89,7 +96,6 @@ Future<Response> buildHttpResponse(String endPoint,
 
     if (MmUtils.instance!.isPrintLog()) {
       DateTime endApiCall = DateTime.now();
-      //printLogs("From Logs");
 
       apiURLResponseLog(
           url: url.toString(),
@@ -99,9 +105,10 @@ Future<Response> buildHttpResponse(String endPoint,
           request: jsonEncode(request),
           encryptRequest: getEncryptRequest(request),
           statusCode: response.statusCode.validate(),
-          encryptResponse:
-              MasterResponseClass.fromJson(jsonDecode(response.body))
-                  .requestData!,
+          encryptResponse: (MmUtils.instance!.isEncryptData())
+              ? MasterResponseClass.fromJson(jsonDecode(response.body))
+                  .requestData!
+              : "",
           responseBody: getDecryptDataResponse(
               MasterResponseClass.fromJson(jsonDecode(response.body))
                   .requestData!),
@@ -123,7 +130,6 @@ Future handleResponse(Response response) async {
 
   if (response.statusCode.isSuccessful()) {
     var v = MasterResponseClass.fromJson(jsonDecode(response.body));
-    // printLogs("From handleResponse");
     return getDecryptDataResponse(v.requestData!, isJsonDecode: true);
   } else {
     var string = await (isJsonValid(response.body));
@@ -171,10 +177,10 @@ void apiURLResponseLog({
   String endPoint = "",
   String headers = "",
   String request = "",
-  String encryptRequest = "",
+  dynamic encryptRequest = "",
   String encryptResponse = "",
   int statusCode = 0,
-  String responseBody = "",
+  dynamic responseBody = "",
   String methodType = "",
   bool hasRequest = false,
   DateTime? startTime,
