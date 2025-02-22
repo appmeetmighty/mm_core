@@ -35,7 +35,8 @@ Map<String, String> buildHeaderTokens() {
 Uri buildBaseUrl(String endPoint) {
   Uri url = Uri.parse(endPoint);
   if (!endPoint.startsWith('http')) {
-    url = Uri.parse('${MmUtils.instance!.getBaseUrl()}$endPoint');
+    url = Uri.parse(
+        '${MmUtils.instance!.getBaseUrl()}${MmUtils.instance!.getApiPath()}$endPoint');
   }
   return url;
 }
@@ -176,7 +177,7 @@ void apiURLResponseLog({
   String url = "",
   String endPoint = "",
   String headers = "",
-  String request = "",
+  dynamic request = "",
   dynamic encryptRequest = "",
   String encryptResponse = "",
   int statusCode = 0,
@@ -204,7 +205,7 @@ void apiURLResponseLog({
   _printLogsForRequest("\u001b[31m Url: \u001B[39m $url");
   _printLogsForRequest(
       "\u001b[31m Header: \u001B[39m \u001b[96m$headers\u001B[39m");
-  if (request.isNotEmpty) {
+  if (request != null && request.isNotEmpty) {
     _printLogsForRequest(
         "\u001b[31m Request: \u001B[39m \u001b[96m$request\u001B[39m");
   }

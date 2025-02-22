@@ -10,6 +10,7 @@ void main() {
       ivKey: "23a1dfr5lyhd9a1404845001",
       appName: "Demo App",
       baseUrl: "https://google.com",
+      apiPath: "/api/",
       navigatorKey: navigatorKey);
 
   runApp(const MyApp());

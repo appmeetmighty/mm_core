@@ -14,6 +14,8 @@ class MmUtils {
   // baseUrl to call apis
   static String _baseUrl = "";
 
+  static String _apiPath = "";
+
   static String _authToken = "";
 
   static String _appName = "";
@@ -32,6 +34,8 @@ class MmUtils {
   String getIvKey() => _aesIvKey;
 
   String getBaseUrl() => _baseUrl;
+
+  String getApiPath() => _apiPath;
 
   String getToken() => _authToken;
 
@@ -57,6 +61,7 @@ class MmUtils {
     required String? secretKey,
     required String? ivKey,
     required String? appName,
+    required String? apiPath,
     required String? baseUrl,
     required GlobalKey<NavigatorState> navigatorKey,
   }) {
@@ -72,6 +77,7 @@ class MmUtils {
         ivKey: ivKey!,
         baseUrl: baseUrl!,
         appName: appName!,
+        apiPath: apiPath!,
         navigatorKey: navigatorKey);
     return MmUtils.instance!;
   }
@@ -81,12 +87,14 @@ class MmUtils {
       {required String secretKey,
       required String ivKey,
       required String baseUrl,
+      required String apiPath,
       required String appName,
       required GlobalKey<NavigatorState> navigatorKey}) {
     _aesSecretKey = secretKey;
     _aesIvKey = ivKey;
     _baseUrl = baseUrl;
     _appName = appName;
+    _apiPath = apiPath;
     _navigatorKey = navigatorKey;
   }
 
