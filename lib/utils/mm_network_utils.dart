@@ -204,12 +204,12 @@ void apiURLResponseLog({
   _printLogsForRequest("\u001b[31m Url: \u001B[39m $url");
   _printLogsForRequest(
       "\u001b[31m Header: \u001B[39m \u001b[96m$headers\u001B[39m");
-  if (request!=null && request.isNotEmpty) {
+  if (request.isNotEmpty) {
     _printLogsForRequest(
         "\u001b[31m Request: \u001B[39m \u001b[96m$request\u001B[39m");
   }
 
-  if (encryptRequest!=null && encryptRequest.isNotEmpty) {
+  if (encryptRequest != null && encryptRequest.isNotEmpty) {
     _printLogsForRequest(
         "\u001b[31m Encrypt Request: \u001B[39m \u001b[96m$encryptRequest\u001B[39m");
   }
