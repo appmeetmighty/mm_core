@@ -50,7 +50,7 @@ class MmUtils {
       }
       return false;
     } else {
-      return _isEncryptData!;
+      return _isEncryptData ?? false;
     }
   }
 
