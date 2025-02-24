@@ -98,7 +98,6 @@ Future<Response> buildHttpResponse(String endPoint,
     if (MmUtils.instance!.isPrintLog()) {
       DateTime endApiCall = DateTime.now();
 
-
       apiURLResponseLog(
           url: url.toString(),
           endPoint: endPoint,
