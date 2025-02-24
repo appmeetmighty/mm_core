@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class MmUtils {
@@ -44,14 +43,14 @@ class MmUtils {
   bool isPrintLog() => _isPrintLog;
 
   bool isEncryptData() {
-   // if (kDebugMode) {
-      if (_isEncryptData != null) {
-        return _isEncryptData!;
-      }
-      return false;
-   // } else {
-   //   return _isEncryptData ?? false;
-   // }
+    // if (kDebugMode) {
+    if (_isEncryptData != null) {
+      return _isEncryptData!;
+    }
+    return false;
+    // } else {
+    //   return _isEncryptData ?? false;
+    // }
   }
 
   GlobalKey<NavigatorState> getNavigatorStateKey() => _navigatorKey;
