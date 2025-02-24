@@ -63,6 +63,7 @@ class MmUtils {
     required String? appName,
     required String? apiPath,
     required String? baseUrl,
+    required bool? isEncryptData,
     required GlobalKey<NavigatorState> navigatorKey,
   }) {
     assert(
@@ -78,6 +79,7 @@ class MmUtils {
         baseUrl: baseUrl!,
         appName: appName!,
         apiPath: apiPath!,
+        isEncryptData: isEncryptData!,
         navigatorKey: navigatorKey);
     return MmUtils.instance!;
   }
@@ -89,6 +91,7 @@ class MmUtils {
       required String baseUrl,
       required String apiPath,
       required String appName,
+      required bool isEncryptData,
       required GlobalKey<NavigatorState> navigatorKey}) {
     _aesSecretKey = secretKey;
     _aesIvKey = ivKey;
@@ -96,18 +99,15 @@ class MmUtils {
     _appName = appName;
     _apiPath = apiPath;
     _navigatorKey = navigatorKey;
+    _isEncryptData = isEncryptData;
   }
 
-  void updateConfiguration(
-      {String? authToken, bool? isPrintLogs, bool? isEncryptData}) {
+  void updateConfiguration({String? authToken, bool? isPrintLogs}) {
     if (authToken != null) {
       _authToken = authToken;
     }
     if (isPrintLogs != null) {
       _isPrintLog = isPrintLogs;
-    }
-    if (isEncryptData != null) {
-      _isEncryptData = isEncryptData;
     }
   }
 }

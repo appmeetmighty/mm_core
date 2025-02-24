@@ -11,6 +11,7 @@ void main() {
       appName: "Demo App",
       baseUrl: "https://google.com",
       apiPath: "/api/",
+      isEncryptData: false,
       navigatorKey: navigatorKey);
 
   runApp(const MyApp());
