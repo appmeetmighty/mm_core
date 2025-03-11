@@ -139,7 +139,6 @@ Future handleResponse(Response response) async {
   }
 
   if (response.statusCode.isSuccessful()) {
-
     //var v = MasterResponseClass.fromJson(jsonDecode(response.body));
     MasterResponseClass v = await parseJson(response.body);
     return getDecryptDataResponse(v.requestData!, isJsonDecode: true);
