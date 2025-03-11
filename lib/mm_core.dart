@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-class MmUtils {
+class MmCore {
   // instance of  MmUtils object
-  static MmUtils? instance;
+  static MmCore? instance;
 
   // AES secret key  for data encryption
   static String _aesSecretKey = "";
@@ -26,7 +26,7 @@ class MmUtils {
 
   static GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
 
-  MmUtils._();
+  MmCore._();
 
   String getSecretKey() => _aesSecretKey;
 
@@ -56,7 +56,7 @@ class MmUtils {
   GlobalKey<NavigatorState> getNavigatorStateKey() => _navigatorKey;
 
   /// Initialize MmUtils
-  static MmUtils init({
+  static MmCore init({
     required String? secretKey,
     required String? ivKey,
     required String? appName,
@@ -71,8 +71,8 @@ class MmUtils {
     assert(baseUrl!.isNotEmpty, "Must required base Url to call apis");
     assert(appName!.isNotEmpty, "Must required app name for logs");
 
-    MmUtils.instance ??= MmUtils._();
-    MmUtils.instance!.initialize(
+    MmCore.instance ??= MmCore._();
+    MmCore.instance!.initialize(
         secretKey: secretKey!,
         ivKey: ivKey!,
         baseUrl: baseUrl!,
@@ -80,7 +80,7 @@ class MmUtils {
         apiPath: apiPath!,
         isEncryptData: isEncryptData!,
         navigatorKey: navigatorKey);
-    return MmUtils.instance!;
+    return MmCore.instance!;
   }
 
   /// Initialize MenstrualCycleWidget

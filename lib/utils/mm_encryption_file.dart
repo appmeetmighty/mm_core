@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'package:encrypt/encrypt.dart';
 
-import '../mm_utils.dart';
+import '../mm_core.dart';
 
 class Encryption {
   static final Encryption instance = Encryption.init();
@@ -12,7 +12,7 @@ class Encryption {
   late Encrypter _encryption;
 
   Encryption.init() {
-    final instance = MmUtils.instance!;
+    final instance = MmCore.instance!;
     final keyUtf8 = utf8.encode(instance.getSecretKey());
     final ivUtf8 = utf8.encode(instance.getIvKey());
     final key = sha256.convert(keyUtf8).toString().substring(0, 32);

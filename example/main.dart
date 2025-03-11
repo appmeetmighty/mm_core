@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:mm_utils/mm_utils.dart';
+import 'package:mm_core/mm_core.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  MmUtils.init(
+  MmCore.init(
       secretKey: "11a1215l0119a140409p0919",
       ivKey: "23a1dfr5lyhd9a1404845001",
       appName: "Demo App",

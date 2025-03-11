@@ -5,9 +5,9 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:intl/intl.dart';
-import 'package:mm_utils/utils/int_extensions.dart';
+import 'package:mm_core/utils/int_extensions.dart';
 
-import '../mm_utils.dart';
+import '../mm_core.dart';
 import '../model/master_response_class.dart';
 import 'mm_common.dart';
 import 'mm_constant.dart';
@@ -24,9 +24,9 @@ Map<String, String> buildHeaderTokens() {
     'Access-Control-Allow-Origin': '*',
   };
 
-  if (MmUtils.instance!.getToken().isNotEmpty) {
+  if (MmCore.instance!.getToken().isNotEmpty) {
     header.putIfAbsent(HttpHeaders.authorizationHeader,
-        () => 'Bearer ${MmUtils.instance!.getToken()}');
+        () => 'Bearer ${MmCore.instance!.getToken()}');
   }
 
   return header;
@@ -36,13 +36,13 @@ Uri buildBaseUrl(String endPoint) {
   Uri url = Uri.parse(endPoint);
   if (!endPoint.startsWith('http')) {
     url = Uri.parse(
-        '${MmUtils.instance!.getBaseUrl()}${MmUtils.instance!.getApiPath()}$endPoint');
+        '${MmCore.instance!.getBaseUrl()}${MmCore.instance!.getApiPath()}$endPoint');
   }
   return url;
 }
 
 getEncryptRequest(Map? request) {
-  if (MmUtils.instance!.isEncryptData()) {
+  if (MmCore.instance!.isEncryptData()) {
     String encryptRequest = jsonEncode(request);
     return Encryption.instance.encryptData(encryptRequest);
   }
@@ -50,7 +50,7 @@ getEncryptRequest(Map? request) {
 }
 
 getDecryptDataResponse(dynamic response, {bool isJsonDecode = false}) {
-  if (MmUtils.instance!.isEncryptData()) {
+  if (MmCore.instance!.isEncryptData()) {
     try {
       String realResponse = Encryption.instance.decryptData(response);
       if (isJsonDecode) {
@@ -75,7 +75,7 @@ Future<Response> buildHttpResponse(String endPoint,
 
     dynamic requestData;
 
-    if (MmUtils.instance!.isEncryptData()) {
+    if (MmCore.instance!.isEncryptData()) {
       requestData = {"requestData": getEncryptRequest(request)};
     } else {
       requestData = request;
@@ -95,7 +95,7 @@ Future<Response> buildHttpResponse(String endPoint,
       response = await get(url, headers: headers);
     }
 
-    if (MmUtils.instance!.isPrintLog()) {
+    if (MmCore.instance!.isPrintLog()) {
       DateTime endApiCall = DateTime.now();
 
       apiURLResponseLog(
@@ -106,7 +106,7 @@ Future<Response> buildHttpResponse(String endPoint,
           request: jsonEncode(request),
           encryptRequest: getEncryptRequest(request),
           statusCode: response.statusCode.validate(),
-          encryptResponse: (MmUtils.instance!.isEncryptData())
+          encryptResponse: (MmCore.instance!.isEncryptData())
               ? MasterResponseClass.fromJson(jsonDecode(response.body))
                   .requestData!
               : "",
@@ -124,13 +124,24 @@ Future<Response> buildHttpResponse(String endPoint,
   }
 }
 
+Future<MasterResponseClass> parseJson(String responseBody) async {
+  return compute(decodeJson, responseBody);
+}
+
+MasterResponseClass decodeJson(String responseBody) {
+  final parsed = jsonDecode(responseBody);
+  return MasterResponseClass.fromJson(parsed);
+}
+
 Future handleResponse(Response response) async {
   if (!await isNetworkAvailable()) {
     throw errorInternetNotAvailable;
   }
 
   if (response.statusCode.isSuccessful()) {
-    var v = MasterResponseClass.fromJson(jsonDecode(response.body));
+
+    //var v = MasterResponseClass.fromJson(jsonDecode(response.body));
+    MasterResponseClass v = await parseJson(response.body);
     return getDecryptDataResponse(v.requestData!, isJsonDecode: true);
   } else {
     var string = await (isJsonValid(response.body));
@@ -188,7 +199,7 @@ void apiURLResponseLog({
   DateTime? endTime,
 }) {
   String currentDate =
-      "${MmUtils.instance!.getAppName()} : ${DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now())}";
+      "${MmCore.instance!.getAppName()} : ${DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now())}";
 
   _printLogsForRequest(
       "\u001B[39m \u001b[96m┌─────────────────────────── \u001b[31m Start log report from $currentDate \u001b[96m ───────────────────────────┐\u001B[39m");
@@ -227,7 +238,7 @@ void apiURLResponseLog({
   //}
   _printLogsForRequest("\u001B[0m");
   String engLog =
-      "${MmUtils.instance!.getAppName()} : ${DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now())}";
+      "${MmCore.instance!.getAppName()} : ${DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now())}";
 
   _printLogsForRequest(
       "\u001B[39m \u001b[96m└─────────────────────────── \u001b[31m Log report end from $engLog \u001b[96m ───────────────────────────┘\u001B[39m");
@@ -256,16 +267,16 @@ Future<void> sendMultiPartRequest(MultipartRequest multiPartRequest,
 /// Print logs to console
 printLogs(Object? value) {
   String currentDate = DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
-  if (MmUtils.instance!.isPrintLog()) {
+  if (MmCore.instance!.isPrintLog()) {
     if (kDebugMode) {
-      print("${MmUtils.instance!.getAppName()} $currentDate: $value");
+      print("${MmCore.instance!.getAppName()} $currentDate: $value");
     }
   }
 }
 
 /// Print logs to console
 _printLogsForRequest(Object? value) {
-  if (MmUtils.instance!.isPrintLog()) {
+  if (MmCore.instance!.isPrintLog()) {
     if (kDebugMode) {
       print("$value");
     }
